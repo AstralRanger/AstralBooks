@@ -64,6 +64,8 @@ public class ChartOfAccountGUI extends JFrame implements ActionListener
 		setResizable (false);
 		setDefaultCloseOperation (JFrame.DISPOSE_ON_CLOSE);
 		setLocationRelativeTo (null);  
+		
+		refreshChartOfAccount();
 	}
 	
 	public void actionPerformed(ActionEvent e) 

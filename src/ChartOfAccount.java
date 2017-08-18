@@ -1,4 +1,14 @@
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.zip.ZipOutputStream;
+
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 @SuppressWarnings("serial")
 public class ChartOfAccount extends ArrayList <Account> 
@@ -82,4 +92,98 @@ public class ChartOfAccount extends ArrayList <Account>
 		return -1;
 	}
 	
+	// Return 0 if error, 1 if successful
+	public int read (InputStream info)
+	{
+		this.clear();
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(info))) 
+		{
+		    String line;
+		    while ((line = br.readLine()) != null) 
+		    {
+		    	System.out.println(line);
+		    	String name;
+		    	int id, type;
+		    	int sep = line.indexOf('_');
+		    	name = line.substring(0, sep);
+		    	line = line.substring(sep + 1);
+		    	
+		    	sep = line.indexOf('_');
+		    	id = Integer.parseInt(line.substring(0, sep));
+		    	type = Integer.parseInt(line.substring(sep + 1));
+		    	
+		    	Account temp = new Account (id, name, type);
+		    	if (this.idExist(id))
+		    	{
+		    		this.clear();
+		    		return 0;
+		    	}
+		    	this.add(temp);    	
+		    }
+		    return 1;
+		} 
+		catch (Exception e1) 
+		{
+			return 0;
+		} 
+	}
+	
+	public int write (ZipOutputStream fw)
+	{
+		 try 
+         {
+      	   for (int c = 0; c < this.size(); c++)
+      		   fw.write((this.get(c).getName() + "_" +
+      				    this.get(c).getId() + "_" +
+      				    this.get(c).getType() + System.getProperty("line.separator")).getBytes());
+      	   return 1;
+         }
+         catch (Exception e1)
+         {
+      	    return 0;
+         }
+	}
+	
+	public int readBalances (InputStream info)
+	{
+		try (BufferedReader br = new BufferedReader(new InputStreamReader(info))) 
+		{
+		    String line;
+		    while ((line = br.readLine()) != null) 
+		    {
+		    	int id, initbal;
+		    	int sep = line.indexOf('_');
+		    	id = Integer.parseInt(line.substring(0, sep));
+		    	initbal = Integer.parseInt(line.substring(sep + 1));
+		    	if (!this.setInitialbalance(id, initbal))
+		    	{
+		    		for (int c = 0; c < this.size(); c++)
+		    		{
+		    			this.get(c).setInitialBalance(0);
+		    		}
+		    		return 0;
+		    	}
+		    }
+		    return 1;
+		} 
+		catch (Exception e1) 
+		{
+			return 0;
+		} 
+	}
+	
+	public int writeBalances (ZipOutputStream fw)
+	{
+		try 
+        {
+     	   for (int c = 0; c < this.size(); c++)
+     		   fw.write((this.get(c).getId() + "_" +
+     				    this.get(c).getInitialBalance()  + System.getProperty("line.separator")).getBytes());
+     	   return 1;
+        }
+        catch (Exception e1)
+        {
+     	   return 0;
+        }
+	}
 }

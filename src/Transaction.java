@@ -19,4 +19,52 @@ public class Transaction extends ArrayList <Entry>
 		}
 		return totalDR == totalCR;
 	}
+	
+	public void read (String line)
+	{
+		while (line.length() > 0)
+		{
+			System.out.println(line);
+			int sepIndex = line.indexOf("_");
+			String entryStr = line.substring(0, sepIndex);
+			
+			
+			int id = Integer.parseInt(entryStr.substring(0, entryStr.indexOf("*")));
+			entryStr = entryStr.substring(entryStr.indexOf("*") + 1);
+			System.out.println(entryStr);
+			String name = entryStr.substring(0, entryStr.indexOf("*"));
+			entryStr = entryStr.substring(entryStr.indexOf("*") + 1);
+			System.out.println(entryStr);
+			int type = Integer.parseInt(entryStr.substring(0, entryStr.indexOf("*")));
+			entryStr = entryStr.substring(entryStr.indexOf("*") + 1);
+			
+			System.out.println(entryStr);
+			int initBal = Integer.parseInt(entryStr.substring(0, entryStr.indexOf("*")));
+			entryStr = entryStr.substring(entryStr.indexOf("*") + 1);
+			System.out.println(entryStr);
+			int val = Integer.parseInt(entryStr.substring(0, entryStr.indexOf("*")));
+			entryStr = entryStr.substring(entryStr.indexOf("*") + 1);
+			System.out.println(entryStr);
+			int entryType = Integer.parseInt(entryStr);
+			System.out.println("HI");
+			
+			this.add(new Entry(new Account(id, name, type, initBal), val, entryType));
+			line = line.substring(sepIndex + 1);
+		}
+	}	
+	
+	public String write() 
+	{
+		String temp = "";
+		for (int c = 0; c < this.size(); c++)
+		{
+			temp = temp + this.get(c).getAccount().getId() + "*" +
+						  this.get(c).getAccount().getName() + "*" +
+						  this.get(c).getAccount().getType() + "*" +
+						  this.get(c).getAccount().getInitialBalance() + "*" + 
+						  this.get(c).getVal() + "*" +
+						  this.get(c).getType() + "_";
+		}
+		return temp;
+	}
 }
